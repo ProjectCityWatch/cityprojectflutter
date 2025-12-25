@@ -225,7 +225,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ...unread.map((n) {
               final idx = n["index"] as int;
               return _notificationCard(notifications[idx], idx);
-            }).toList(),
+            }),
 
             const SizedBox(height: 25),
 
@@ -248,7 +248,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ...read.map((n) {
               final idx = n["index"] as int;
               return _notificationCard(notifications[idx], idx);
-            }).toList(),
+            }),
           ],
         ),
       ),

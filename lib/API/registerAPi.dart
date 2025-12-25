@@ -3,7 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 final Dio dio = Dio();
-final String url = "http://192.168.1.70:5000";
+final String url = "http://192.168.177.86:5000";
+
 Future<void> Registerapi({
   required String Name,
   required String Phone,
@@ -11,10 +12,6 @@ Future<void> Registerapi({
   required String Password,
   required BuildContext context,
 }) async {
-
-  print("🔍 DEBUG: Sending POST request to: $url/User");
-  print("🔍 DATA: $Name | $Phone | $Email");
-
   try {
     Response response = await dio.post(
       '$url/User',
@@ -23,26 +20,60 @@ Future<void> Registerapi({
         "PhoneNo": Phone,
         "Email": Email,
         "Password": Password,
-        "Username": Email,
+        "Username": Email, // you use Email as username
       },
     );
 
-    print("✅ API HIT SUCCESSFULLY → Status: ${response.statusCode}");
-    print("📩 RESPONSE DATA: ${response.data}");
+    // --------------------------
+    // SUCCESS
+    // --------------------------
+    if (response.statusCode == 201 &&
+        response.data["status"] == "success") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Registration Successful")),
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
-    } else {
-      print("❌ Server returned error: ${response.statusCode}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration Failed')),
-      );
+
+      return;
     }
 
+    // --------------------------
+    // ERROR HANDLING (400 BAD REQUEST)
+    // --------------------------
+    if (response.statusCode == 400) {
+      String message = "Registration failed";
+
+      final errors = response.data["errors"];
+
+      if (errors != null) {
+        if (errors["Email"] != null) {
+          message = errors["Email"][0]; // "Email already registered"
+        }
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+
+      return;
+    }
+
+    // --------------------------
+    // ANY OTHER ERROR
+    // --------------------------
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Something went wrong")),
+    );
+
   } catch (e) {
-    print("❌ ERROR while sending request: $e");
+    print("❌ Error: $e");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Server error. Try again later")),
+    );
   }
 }
