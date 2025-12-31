@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 final Dio dio = Dio();
-final String url = "http://192.168.74.86:5000";
-int? loginid;
+final String url =  "http://192.168.74.86:5000";
+
 Future<void> Loginapi({
   required String Username,
   required String Password,
@@ -12,7 +12,7 @@ Future<void> Loginapi({
 }) async {
   try {
     final Response response = await dio.post(
-      '$url/UserLogin',
+      '$url/GetMyComplaintStatus',
       data: {
         "Username": Username,
         "Password": Password,
@@ -33,7 +33,7 @@ Future<void> Loginapi({
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Login successful")),
       );
-loginid=response.data["userId"];
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),

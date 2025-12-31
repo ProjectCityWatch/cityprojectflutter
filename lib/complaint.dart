@@ -1,3 +1,4 @@
+import 'package:citywatchapp/API/send_complaint_api.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -46,15 +47,16 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                   IconButton(
                     icon: const Icon(Icons.camera_alt, size: 35),
                     onPressed: () async {
-                      final pickedFile =
-                          await picker.pickImage(source: ImageSource.camera);
+                      final pickedFile = await picker.pickImage(
+                        source: ImageSource.camera,
+                      );
                       if (pickedFile != null) {
                         setState(() => selectedImage = File(pickedFile.path));
                       }
                       Navigator.pop(context);
                     },
                   ),
-                  const Text("Camera")
+                  const Text("Camera"),
                 ],
               ),
               Column(
@@ -63,15 +65,16 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                   IconButton(
                     icon: const Icon(Icons.photo, size: 35),
                     onPressed: () async {
-                      final pickedFile =
-                          await picker.pickImage(source: ImageSource.gallery);
+                      final pickedFile = await picker.pickImage(
+                        source: ImageSource.gallery,
+                      );
                       if (pickedFile != null) {
                         setState(() => selectedImage = File(pickedFile.path));
                       }
                       Navigator.pop(context);
                     },
                   ),
-                  const Text("Gallery")
+                  const Text("Gallery"),
                 ],
               ),
             ],
@@ -85,9 +88,9 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
   Future<bool> _checkLocationPermission() async {
     bool enabled = await Geolocator.isLocationServiceEnabled();
     if (!enabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enable location service.")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Enable location service.")));
       return false;
     }
 
@@ -105,7 +108,9 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
 
     if (permission == LocationPermission.deniedForever) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enable location permissions in settings.")),
+        const SnackBar(
+          content: Text("Enable location permissions in settings."),
+        ),
       );
       return false;
     }
@@ -118,13 +123,17 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
     bool allowed = await _checkLocationPermission();
     if (!allowed) return;
 
-    Position pos =
-        await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position pos = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
 
     latitude = pos.latitude;
     longitude = pos.longitude;
 
-    List<Placemark> marks = await placemarkFromCoordinates(latitude!, longitude!);
+    List<Placemark> marks = await placemarkFromCoordinates(
+      latitude!,
+      longitude!,
+    );
     Placemark p = marks.first;
 
     setState(() {
@@ -153,8 +162,10 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ---------------------- DESCRIPTION ----------------------
-            const Text("Description",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Description",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             Container(
@@ -164,16 +175,19 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                 controller: _descriptionController,
                 maxLines: 4,
                 decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Explain the issue clearly..."),
+                  border: InputBorder.none,
+                  hintText: "Explain the issue clearly...",
+                ),
               ),
             ),
 
             const SizedBox(height: 25),
 
             // ---------------------- CATEGORY ----------------------
-            const Text("Category",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Category",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             Container(
@@ -185,10 +199,18 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                   hint: const Text("Select category"),
                   items: const [
                     DropdownMenuItem(value: "Road", child: Text("Road Damage")),
-                    DropdownMenuItem(value: "Water", child: Text("Water Leakage")),
-                    DropdownMenuItem(value: "Waste", child: Text("Waste Dumping")),
                     DropdownMenuItem(
-                        value: "Lighting", child: Text("Street Light Issue")),
+                      value: "Water",
+                      child: Text("Water Leakage"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Waste",
+                      child: Text("Waste Dumping"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Lighting",
+                      child: Text("Street Light Issue"),
+                    ),
                   ],
                   onChanged: (v) => setState(() => selectedCategory = v),
                 ),
@@ -198,8 +220,10 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
             const SizedBox(height: 25),
 
             // ---------------------- PRIORITY ----------------------
-            const Text("Priority",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Priority",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             Container(
@@ -222,8 +246,10 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
             const SizedBox(height: 25),
 
             // ---------------------- IMAGE ----------------------
-            const Text("Attach Image",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Attach Image",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             GestureDetector(
@@ -234,17 +260,21 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                 child: selectedImage == null
                     ? const Center(
                         child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.camera_alt_outlined, size: 40),
-                          SizedBox(height: 8),
-                          Text("Tap to upload image"),
-                        ],
-                      ))
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.camera_alt_outlined, size: 40),
+                            SizedBox(height: 8),
+                            Text("Tap to upload image"),
+                          ],
+                        ),
+                      )
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(14),
-                        child: Image.file(selectedImage!,
-                            width: double.infinity, fit: BoxFit.cover),
+                        child: Image.file(
+                          selectedImage!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
               ),
             ),
@@ -252,8 +282,10 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
             const SizedBox(height: 25),
 
             // ---------------------- LOCATION ----------------------
-            const Text("Location",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Location",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             // ⭐ FIXED BUTTON PADDING ⭐
@@ -264,10 +296,8 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                 child: Icon(Icons.location_on_outlined, size: 20),
               ),
               label: const Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                child: Text("Pick Location",
-                    style: TextStyle(fontSize: 16)),
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                child: Text("Pick Location", style: TextStyle(fontSize: 16)),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF009DCC),
@@ -288,13 +318,16 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("📍 $address",
-                        style: const TextStyle(fontSize: 14)),
+                    Text("📍 $address", style: const TextStyle(fontSize: 14)),
                     const SizedBox(height: 8),
-                    Text("Latitude: $latitude",
-                        style: const TextStyle(color: Colors.grey)),
-                    Text("Longitude: $longitude",
-                        style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      "Latitude: $latitude",
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      "Longitude: $longitude",
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -315,21 +348,26 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Submit Anonymously",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(
+                          "Submit Anonymously",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         SizedBox(height: 4),
-                        Text("Your identity will be hidden.",
-                            style: TextStyle(fontSize: 13, color: Colors.grey)),
+                        Text(
+                          "Your identity will be hidden.",
+                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
                       ],
                     ),
                   ),
 
                   Switch(
                     value: anonymous,
-                    onChanged: (value) =>
-                        setState(() => anonymous = value),
-                  )
+                    onChanged: (value) => setState(() => anonymous = value),
+                  ),
                 ],
               ),
             ),
@@ -341,15 +379,29 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      sendComplaint(
+                        category: selectedCategory!,
+                        description: _descriptionController.text,
+                        priority: selectedPriority!,
+                        latitude: latitude!,
+                        longitude: longitude!,
+                        isAnonymous: anonymous,
+                        context: context,
+                        image: selectedImage,
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF009DCC),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
-                    child: const Text("Submit",
-                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                    child: const Text(
+                      "Submit",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
                   ),
                 ),
 
@@ -362,10 +414,13 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                       side: const BorderSide(color: Color(0xFF009DCC)),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
-                    child: const Text("Cancel",
-                        style: TextStyle(fontSize: 16, color: Color(0xFF009DCC))),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(fontSize: 16, color: Color(0xFF009DCC)),
+                    ),
                   ),
                 ),
               ],
