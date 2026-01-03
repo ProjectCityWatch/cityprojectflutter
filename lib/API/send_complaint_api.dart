@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:citywatchapp/API/loginAPI.dart';
+import 'package:citywatchapp/API/registerAPi.dart' hide dio;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 

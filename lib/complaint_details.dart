@@ -1,3 +1,4 @@
+import 'package:citywatchapp/API/registerAPi.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:citywatchapp/API/loginAPI.dart';
@@ -29,7 +30,7 @@ bool isVerified = false;
     try {
       final response =
           await dio.get("$url/view-timeline/${widget.complaintid}");
-
+print(response.data);
       if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
           timeline = List<Map<String, dynamic>>.from(response.data);
@@ -56,7 +57,7 @@ bool isVerified = false;
 
   Color statusColor(String status) {
     switch (status.toLowerCase()) {
-      case "requested":
+      case "pending":
         return Colors.grey;
       case "assigned":
         return Colors.orange;

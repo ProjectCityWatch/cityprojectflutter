@@ -42,7 +42,6 @@ class LeaderboardPage extends StatelessWidget {
             _sectionTitle("Top Contributors"),
             const SizedBox(height: 12),
 
-            // TOP LIST
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -72,7 +71,6 @@ class LeaderboardPage extends StatelessWidget {
         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       );
 
-  // 🎖 LEADER TILE
   Widget _buildLeaderTile(BuildContext context, Map<String, dynamic> item, int index) {
     final rank = item["rank"];
     final name = item["name"];
@@ -184,7 +182,6 @@ class LeaderboardPage extends StatelessWidget {
     );
   }
 
-  // ⭐ YOUR RANK CARD
   Widget _yourRankCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -228,9 +225,10 @@ class LeaderboardPage extends StatelessWidget {
     );
   }
 
-  // ⭐ FIXED — CENTER ALIGNED HOW TO EARN POINTS
+  // ⭐ UPDATED — HOW TO EARN POINTS VALUES ONLY
   Widget _buildHowToEarnPointsCard() {
-    return SingleChildScrollView(scrollDirection: Axis.horizontal,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
@@ -238,20 +236,20 @@ class LeaderboardPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.grey.shade300),
         ),
-      
+
         child: Column(
           children: [
             const Text("How to Earn Points",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
-      
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _earnItem(Icons.edit_note, "Report an Issue", "+10 pts"),
-                _earnItem(Icons.check_circle, "Issue Resolved", "+50 pts"),
-                _earnItem(Icons.thumb_up_alt, "Upvote Received", "+2 pts"),
-                _earnItem(Icons.emoji_events, "Earn a Badge", "+100 pts"),
+                _earnItem(Icons.edit_note, "Report an Issue", "+50 pts"),
+                _earnItem(Icons.check_circle, "Issue Resolved", "+100 pts"),
+                _earnItem(Icons.thumb_up_alt, "Vote Received", "+10 pts"),
+                _earnItem(Icons.emoji_events, "Earn a Badge", "+200 pts"),
               ],
             ),
           ],
@@ -260,7 +258,6 @@ class LeaderboardPage extends StatelessWidget {
     );
   }
 
-  // ⭐ CENTERED ITEMS
   Widget _earnItem(IconData icon, String title, String pts) {
     return Column(
       children: [
@@ -276,7 +273,6 @@ class LeaderboardPage extends StatelessWidget {
     );
   }
 
-  // ⭐ CLIMB LEADERBOARD CARD
   Widget _buildClimbLeaderboardCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),

@@ -1,9 +1,10 @@
+import 'package:citywatchapp/API/registerAPi.dart';
 import 'package:citywatchapp/home.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 final Dio dio = Dio();
-final String url = "http://192.168.74.86:5000";
+
 int? loginid;
 Future<void> Loginapi({
   required String Username,

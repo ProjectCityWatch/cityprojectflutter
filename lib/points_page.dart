@@ -13,56 +13,63 @@ class PointsPage extends StatelessWidget {
   // Which badges this user has earned
   final List<String> earnedBadgeTitles = const [
     "First Report",
-    "Problem Solver",
+    "First Problem Resolve",
   ];
 
+  // AVAILABLE BADGES
   final List<Map<String, String>> badges = const [
     {
       "title": "First Report",
-      "subtitle": "Congratulations on making your first report.",
-      "points": "+50 pts",
+      "subtitle": "Earned for submitting your very first complaint.",
+      "points": "+200 pts",
     },
     {
-      "title": "Active Citizen",
-      "subtitle": "Awarded for consistent reporting and engagement.",
-      "points": "+100 pts",
-    },
-    {
-      "title": "Community Helper",
-      "subtitle": "Recognizing your efforts in supporting others.",
-      "points": "+75 pts",
-    },
-    {
-      "title": "Problem Solver",
-      "subtitle": "For successfully reporting an issue that was resolved.",
+      "title": "First Problem Resolve",
+      "subtitle": "Awarded when your reported issue gets resolved.",
       "points": "+200 pts",
     },
     {
       "title": "Pothole Pro",
-      "subtitle": "Master of identifying and reporting road issues.",
-      "points": "+120 pts",
+      "subtitle": "Recognized for reporting multiple road damage issues.",
+      "points": "+200 pts",
+    },
+    {
+      "title": "Clean City Champ",
+      "subtitle": "For actively reporting cleanliness and waste issues.",
+      "points": "+200 pts",
+    },
+    {
+      "title": "Water Watcher",
+      "subtitle": "Awarded for reporting water leakage or wastage.",
+      "points": "+200 pts",
+    },
+    {
+      "title": "Streetlight Saver",
+      "subtitle": "Earned by reporting faulty or broken streetlights.",
+      "points": "+200 pts",
     },
     {
       "title": "Local Hero",
-      "subtitle": "Making a significant impact in your local area.",
-      "points": "+150 pts",
+      "subtitle": "For making a strong positive impact in your locality.",
+      "points": "+500 pts",
     },
   ];
 
+  // CLARIFIED RECENT ACTIVITIES
   final List<Map<String, String>> activities = const [
     {
       "title": "Complaint Reported",
-      "points": "+20",
+      "points": "+50",
       "time": "Today",
     },
     {
-      "title": "Verified a Complaint",
+      "title": "Someone liked your post",
       "points": "+10",
       "time": "Yesterday",
     },
     {
-      "title": "Daily Login Bonus",
-      "points": "+5",
+      "title": "Someone commented on your post",
+      "points": "+20",
       "time": "2 days ago",
     },
   ];
@@ -89,9 +96,6 @@ class PointsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ------------------------------------------------
-            // HEADER
-            // ------------------------------------------------
             const SizedBox(height: 4),
             Text(
               "Compete with fellow citizens and earn rewards for making your city better.",
@@ -103,9 +107,6 @@ class PointsPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // ------------------------------------------------
-            // YOUR POINTS DETAILS (3 SUMMARY CARDS)
-            // ------------------------------------------------
             _buildSectionTitle("Your Points Details"),
             const SizedBox(height: 12),
 
@@ -136,9 +137,6 @@ class PointsPage extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            // ------------------------------------------------
-            // AVAILABLE BADGES
-            // ------------------------------------------------
             _buildSectionTitle("Available Badges"),
             const SizedBox(height: 12),
 
@@ -147,7 +145,7 @@ class PointsPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: badges.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 cards per row
+                crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 childAspectRatio: 0.9,
@@ -173,7 +171,6 @@ class PointsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Badge icon with tick / lock
                       Center(
                         child: CircleAvatar(
                           radius: 26,
@@ -182,12 +179,11 @@ class PointsPage extends StatelessWidget {
                               : Colors.black.withOpacity(0.05),
                           child: Icon(
                             isEarned
-                                ? Icons.verified_rounded // blue tick-style badge
-                                : Icons.lock_outline_rounded, // locked badge
+                                ? Icons.verified_rounded
+                                : Icons.lock_outline_rounded,
                             size: 26,
-                            color: isEarned
-                                ? accentColor
-                                : Colors.grey[500],
+                            color:
+                                isEarned ? accentColor : Colors.grey[500],
                           ),
                         ),
                       ),
@@ -231,9 +227,6 @@ class PointsPage extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            // ------------------------------------------------
-            // RECENT ACTIVITIES
-            // ------------------------------------------------
             _buildSectionTitle("Recent Activities"),
             const SizedBox(height: 12),
 
@@ -314,10 +307,6 @@ class PointsPage extends StatelessWidget {
     );
   }
 
-  // ------------------------------------
-  // HELPERS
-  // ------------------------------------
-
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -335,15 +324,13 @@ class PointsPage extends StatelessWidget {
     required String label,
   }) {
     final width = MediaQuery.of(context).size.width;
-    // keep cards nice on small screens
-    final cardWidth = (width - 16 * 2 - 12 * 2) / 3; // 3 cards, 2 gaps
+    final cardWidth = (width - 16 * 2 - 12 * 2) / 3;
 
     return SizedBox(
       width: cardWidth < 120 ? 140 : cardWidth,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1623),
           gradient: const LinearGradient(
             colors: [
               Color(0xFF0B1623),
@@ -355,13 +342,8 @@ class PointsPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 26,
-              color: accentColor,
-            ),
+            Icon(icon, size: 26, color: accentColor),
             const SizedBox(height: 10),
             Text(
               value,
