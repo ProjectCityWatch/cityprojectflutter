@@ -15,8 +15,9 @@ class SubmitComplaintPage extends StatefulWidget {
 class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
   final TextEditingController _descriptionController = TextEditingController();
 
-  String? selectedCategory;
+ 
   String? selectedPriority;
+  String? selectedcategory;
 
   File? selectedImage;
 
@@ -181,41 +182,41 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
               ),
             ),
 
-            const SizedBox(height: 25),
+            // const SizedBox(height: 25),
 
-            // ---------------------- CATEGORY ----------------------
-            const Text(
-              "Category",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
+            // // ---------------------- CATEGORY ----------------------
+            // const Text(
+            //   "Category",
+            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            // ),
+            // const SizedBox(height: 8),
 
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: commonBox,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedCategory,
-                  hint: const Text("Select category"),
-                  items: const [
-                    DropdownMenuItem(value: "Road", child: Text("Road Damage")),
-                    DropdownMenuItem(
-                      value: "Water",
-                      child: Text("Water Leakage"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Waste",
-                      child: Text("Waste Dumping"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Lighting",
-                      child: Text("Street Light Issue"),
-                    ),
-                  ],
-                  onChanged: (v) => setState(() => selectedCategory = v),
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 12),
+            //   decoration: commonBox,
+            //   child: DropdownButtonHideUnderline(
+            //     child: DropdownButton<String>(
+            //       value: selectedCategory,
+            //       hint: const Text("Select category"),
+            //       items: const [
+            //         DropdownMenuItem(value: "Road Damage", child: Text("Road Damage")),
+            //         DropdownMenuItem(
+            //           value: "Water Leak",
+            //           child: Text("Water Leakage"),
+            //         ),
+            //         DropdownMenuItem(
+            //           value: "Waste",
+            //           child: Text("Waste Dumping"),
+            //         ),
+            //         DropdownMenuItem(
+            //           value: "Street Light",
+            //           child: Text("Street Light Issue"),
+            //         ),
+            //       ],
+            //       onChanged: (v) => setState(() => selectedCategory = v),
+            //     ),
+            //   ),
+            // ),
 
             const SizedBox(height: 25),
 
@@ -239,6 +240,34 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                     DropdownMenuItem(value: "Low", child: Text("Low")),
                   ],
                   onChanged: (v) => setState(() => selectedPriority = v),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 25),
+  const SizedBox(height: 25),
+
+            // ---------------------- PRIORITY ----------------------
+            const Text(
+              "Category",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: commonBox,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedcategory,
+                  hint: const Text("Select Category"),
+                  items: const [
+                    DropdownMenuItem(value: "Road Damage", child: Text("Road Damage")),
+                    DropdownMenuItem(value: "Water Leakage", child: Text("Water Leakage")),
+                    DropdownMenuItem(value: "Waste Dumping", child: Text("Waste Dumping")),
+                    DropdownMenuItem(value: "Street Light", child: Text("Street Light")),
+                  ],
+                  onChanged: (val) => setState(() => selectedcategory = val),
                 ),
               ),
             ),
@@ -381,9 +410,9 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       sendComplaint(
-                        category: selectedCategory!,
-                        description: _descriptionController.text,
+                       description: _descriptionController.text,
                         priority: selectedPriority!,
+                        category: selectedcategory!,
                         latitude: latitude!,
                         longitude: longitude!,
                         isAnonymous: anonymous,

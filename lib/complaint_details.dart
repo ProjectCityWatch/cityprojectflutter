@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 class ComplaintDetailsPage extends StatefulWidget {
   final String complaintid;
 
-
   const ComplaintDetailsPage({super.key, required this.complaintid});
 
   @override
@@ -16,21 +15,15 @@ class ComplaintDetailsPage extends StatefulWidget {
 
 class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
   final Dio dio = Dio();
-bool isVerified = false;
+  bool isVerified = false;
+  bool showFullDescription = false;
 
-  // ===============================
-  // TIMELINE DATA FROM API
-  // ===============================
   List<Map<String, dynamic>> timeline = [];
 
-  // ===============================
-  // LOAD TIMELINE API
-  // ===============================
   Future<void> fetchTimeline() async {
     try {
       final response =
           await dio.get("$url/view-timeline/${widget.complaintid}");
-print(response.data);
       if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
           timeline = List<Map<String, dynamic>>.from(response.data);
@@ -47,24 +40,28 @@ print(response.data);
     fetchTimeline();
   }
 
-  // ===============================
-  // DATE FORMAT
-  // ===============================
   String formatDate(String date) {
     return DateFormat("dd MMM yyyy, hh:mm a")
         .format(DateTime.parse(date).toLocal());
   }
 
+  // ===============================
+  // STATUS COLORS (AS REQUESTED)
+  // ===============================
   Color statusColor(String status) {
     switch (status.toLowerCase()) {
-      case "pending":
-        return Colors.grey;
-      case "assigned":
-        return Colors.orange;
-      case "in progress":
-        return Colors.blue;
       case "resolved":
         return Colors.green;
+      case "pending":
+        return Colors.orange;
+      case "assigned":
+        return Colors.purple;
+      case "in progress":
+        return Colors.blue;
+      case "date fixed":
+        return Colors.red;
+      case "extended":
+        return Colors.grey;
       default:
         return Colors.grey;
     }
@@ -81,126 +78,171 @@ print(response.data);
     final latest = timeline.last;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text("Complaint Details"),
-        backgroundColor: Colors.blue[800],
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Complaint Details",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF2575FC), Color(0xFF6A11CB)],
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-          // CATEGORY
-          Text(
-            latest["Category"],
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          // ===============================
+          // CATEGORY + STATUS (CENTERED)
+          // ===============================
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  latest["Category"],
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: statusColor(latest["Status"]).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    latest["Status"],
+                    style: TextStyle(
+                      color: statusColor(latest["Status"]),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
 
-          // STATUS CHIP
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: statusColor(latest["Status"]).withOpacity(0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              latest["Status"],
-              style: TextStyle(
-                color: statusColor(latest["Status"]),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 25),
-
-          // DESCRIPTION
+          // ===============================
+          // DESCRIPTION (SHORTENED)
+          // ===============================
           _sectionTitle("Description"),
-          Text(latest["Description"], style: const TextStyle(fontSize: 16)),
+          Text(
+            latest["Description"],
+            maxLines: showFullDescription ? null : 3,
+            overflow: showFullDescription
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 15),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                showFullDescription = !showFullDescription;
+              });
+            },
+            child: Text(showFullDescription ? "Show less" : "Read more"),
+          ),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 16),
 
+          // ===============================
           // SUBMITTED DATE
+          // ===============================
           _sectionTitle("Submitted On"),
           Text(formatDate(latest["SubmitDate"])),
 
-          const SizedBox(height: 30),
-const SizedBox(height: 25),
-
-// ===============================
-// COMPLAINT IMAGE
-// ===============================
-if (latest["Image"] != null && latest["Image"].toString().isNotEmpty)
-  Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _sectionTitle("Complaint Image"),
-      const SizedBox(height: 10),
-
-      ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          "$url${latest["Image"]}", // base url + image path
-          height: 220,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              height: 220,
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 220,
-              color: Colors.grey.shade300,
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.broken_image,
-                size: 50,
-                color: Colors.grey,
-              ),
-            );
-          },
-        ),
-      ),
-    ],
-  ),
-      const SizedBox(height: 10),
-
-          _sectionTitle("Timeline"),
           const SizedBox(height: 20),
 
           // ===============================
-          // DYNAMIC TIMELINE
+          // IMAGE (SHORTER)
           // ===============================
+          if (latest["Image"] != null && latest["Image"].toString().isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _sectionTitle("Complaint Image"),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.network(
+                    "$url${latest["Image"]}",
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return Container(
+                        height: 120,
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
+                    },
+                    errorBuilder: (_, __, ___) {
+                      return Container(
+                        height: 120,
+                        color: Colors.grey.shade300,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.broken_image,
+                            size: 40, color: Colors.grey),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+          const SizedBox(height: 28),
+
+          // ===============================
+          // TIMELINE (NO GAPS)
+          // ===============================
+          _sectionTitle("Timeline"),
+          const SizedBox(height: 12),
+
           Column(
-            children: timeline.map((t) {
+            children: List.generate(timeline.length, (index) {
+              final t = timeline[index];
+              final isLast = index == timeline.length - 1;
+
               return _timelineTile(
                 title: t["Status"],
                 date: formatDate(t["Date"]),
                 color: statusColor(t["Status"]),
+                showLine: !isLast,
               );
-            }).toList(),
+            }),
           ),
-_buildVerificationSection(latest["Status"]),
 
+          const SizedBox(height: 20),
+
+          _buildVerificationSection(latest["Status"]),
         ]),
       ),
     );
   }
 
   // ===============================
-  // TIMELINE TILE
+  // TIMELINE TILE (TIGHT, CONNECTED)
   // ===============================
   Widget _timelineTile({
     required String title,
     required String date,
     required Color color,
+    required bool showLine,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,94 +250,114 @@ _buildVerificationSection(latest["Status"]),
         Column(
           children: [
             Container(
-              width: 20,
-              height: 20,
+              width: 12,
+              height: 12,
               decoration:
                   BoxDecoration(color: color, shape: BoxShape.circle),
             ),
-            Container(width: 3, height: 40, color: color),
+            if (showLine)
+              Container(
+                width: 3,
+                height: 36, // 🔥 no gap
+                color: color.withOpacity(0.5),
+              ),
           ],
         ),
         const SizedBox(width: 12),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: color)),
-          const SizedBox(height: 4),
-          Text(date,
-              style:
-                  TextStyle(fontSize: 14, color: Colors.grey.shade600)),
-        ]),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  date,
+                  style:
+                      TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
 
   Widget _sectionTitle(String text) {
-    return Text(text,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold));
-  }Widget _buildVerificationSection(String currentStatus) {
-  // ❌ Do not show if status is NOT Resolved
-  if (currentStatus != "Resolved") {
-    return const SizedBox();
-  }
-
-  // ✅ After verification
-  if (isVerified) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: const [
-          Icon(Icons.check_circle, color: Colors.green, size: 30),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              "Thank you! You confirmed that the issue is resolved.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  // 🟢 Show verify button ONLY for Resolved status
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _sectionTitle("Verify Resolution"),
-      const SizedBox(height: 12),
+  // ===============================
+  // VERIFY SECTION (UNCHANGED)
+  // ===============================
+  Widget _buildVerificationSection(String currentStatus) {
+    if (currentStatus != "Resolved") return const SizedBox();
 
-      ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green[700],
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    if (isVerified) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: const [
+            Icon(Icons.check_circle, color: Colors.green, size: 26),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                "Thank you! You confirmed that the issue is resolved.",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle("Verify Resolution"),
+        const SizedBox(height: 10),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green[700],
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              isVerified = true;
+            });
+          },
+          icon: const Icon(Icons.check_circle, color: Colors.white),
+          label: const Text(
+            "Yes, the issue is resolved",
+            style: TextStyle(fontSize: 15, color: Colors.white),
           ),
         ),
-        onPressed: () {
-          setState(() {
-            isVerified = true;
-          });
-        },
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-        label: const Text(
-          "Yes, the issue is resolved",
-          style: TextStyle(fontSize: 16, color: Colors.white),
-        ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 }

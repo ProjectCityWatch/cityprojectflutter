@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 final Dio dio = Dio();
-final String url =  "http://192.168.248.86:5000";
+final String url ="http://192.168.112.86:5000";
 
 Future<void> Registerapi({
   required String Name,

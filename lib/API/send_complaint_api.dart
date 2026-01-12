@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 
 Future<void> sendComplaint({
 
-  required String category,
+
   required String description,
   required String priority,
   required double latitude,
   required double longitude,
+  required String category,
    required  File? image,
   required bool isAnonymous,
   required BuildContext context,
@@ -20,19 +21,24 @@ Future<void> sendComplaint({
   try {
     FormData data = FormData.fromMap({
      
-      "Category": category,
+   
       "Description": description,
       "Priority": priority,
+      "Category": category,
       "Latitude": latitude,
       "Longitude":longitude,
       "is_anonymous": isAnonymous,
       if (image != null)
         "Image": await MultipartFile.fromFile(image.path),
+
     });
+    print(('-----------------'));
+    print(data);
 
     final response = await dio.post(
       "$url/send-complaint/$loginid/",
       data: data,
+      
       options: Options(validateStatus: (_) => true),
     );
 

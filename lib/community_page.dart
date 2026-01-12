@@ -632,10 +632,572 @@
 //     );
 //   }
 // }
-import 'package:citywatchapp/API/loginAPI.dart';
-import 'package:citywatchapp/API/registerAPi.dart';
+// import 'package:citywatchapp/API/loginAPI.dart';
+// import 'package:citywatchapp/API/registerAPi.dart';
+// import 'package:flutter/material.dart';
+// import 'package:dio/dio.dart';
+
+// class CommunityPage extends StatefulWidget {
+//   const CommunityPage({super.key});
+
+//   @override
+//   State<CommunityPage> createState() => _CommunityPageState();
+// }
+
+// class _CommunityPageState extends State<CommunityPage> {
+//   final Color accentColor = const Color(0xFF00B4D8);
+
+//   // =======================
+//   // DIO CONFIG
+//   // =======================
+//   final Dio dio = Dio(
+//     BaseOptions(
+//       baseUrl: "https://YOUR_DOMAIN.com/api", // 🔴 CHANGE
+//       connectTimeout: const Duration(seconds: 10),
+//       receiveTimeout: const Duration(seconds: 10),
+//     ),
+//   );
+
+//   // SORT & FILTER STATE
+//   String selectedSort = "Nearby";
+//   String selectedCategory = "All Categories";
+
+//   final List<String> categories = const [
+//     "All Categories",
+//     "Road Damage",
+//     "Waste Dumping",
+//     "Noise Complaint",
+//     "Water Leakage",
+//     "Street Light",
+//   ];
+
+//   // =======================
+//   // FEED DATA (API ONLY)
+//   // =======================
+//   List<Map<String, dynamic>> feed = [];
+
+//   // =======================
+//   // INIT
+//   // =======================
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchComplaints();
+//   }
+
+//   // =======================
+//   // GET COMPLAINTS
+//   // =======================
+//   Future<String> getLocationName(double lat, double lon) async {
+//   try {
+//     final response = await dio.get(
+//       "https://nominatim.openstreetmap.org/reverse",
+//       queryParameters: {
+//         "lat": lat,
+//         "lon": lon,
+//         "format": "json",
+//       },
+//       options: Options(
+//         headers: {
+//           // IMPORTANT: Nominatim requires User-Agent
+//           "User-Agent": "citywatch-app",
+//         },
+//       ),
+//     );
+
+//     final address = response.data["address"];
+
+//     return [
+//       address["road"],
+//       address["suburb"],
+//       address["city"] ?? address["town"] ?? address["village"],
+//     ].where((e) => e != null).join(", ");
+//   } catch (e) {
+//     debugPrint("Location error: $e");
+//     return "Unknown location";
+//   }
+// }Future<String> _getLocationFromLatLng(
+//   double? lat,
+//   double? lng,
+// ) async {
+//   if (lat == null || lng == null) return "Unknown location";
+
+//   try {
+//     final response = await Dio().get(
+//       "https://nominatim.openstreetmap.org/reverse",
+//       queryParameters: {
+//         "lat": lat,
+//         "lon": lng,
+//         "format": "json",
+//       },
+//       options: Options(
+//         headers: {
+//           "User-Agent": "citywatch-app", // REQUIRED
+//         },
+//       ),
+//     );
+
+//     final address = response.data["address"];
+
+//     return [
+//       address?["road"],
+//       address?["suburb"],
+//       address?["city"] ??
+//           address?["town"] ??
+//           address?["village"],
+//     ].where((e) => e != null && e.toString().isNotEmpty).join(", ");
+//   } catch (e) {
+//     debugPrint("Location error: $e");
+//     return "Unknown location";
+//   }
+// }
+
+// Future<void> _fetchComplaints() async {
+//   try {
+//     final response = await dio.get("$url/view-allcomplaints");
+//     print(response.data);
+
+//     final List data = response.data ?? [];
+//     List<Map<String, dynamic>> tempFeed = [];
+
+//     for (var item in data) {
+//       final double? lat = item["Latitude"] != null
+//           ? double.tryParse(item["Latitude"].toString())
+//           : null;
+
+//       final double? lng = item["Longitude"] != null
+//           ? double.tryParse(item["Longitude"].toString())
+//           : null;
+
+//       final String location =
+//           await _getLocationFromLatLng(lat, lng);
+
+//       tempFeed.add({
+//         "id": item["id"] ?? 0,
+//         "username": item["Name"] ?? "Unknown",
+
+//         // ✅ LOCATION ADDED HERE
+//         "location": location,
+
+//         "category": item["Category"] ?? "Other",
+//         "title": item["title"] ?? "",
+//         "description": item["Description"] ?? "",
+//         "Category": item["Category"] ?? "",
+//         "Status": item["Status"] ?? "",
+//         "imageUrl": item["Image"] ??
+//             "https://via.placeholder.com/400x250",
+//         "time": item["SubmitDate"] ?? "",
+//         "minutesAgo": item["minutes_ago"] ?? 0,
+//         "distanceKm": item["distance_km"] ?? 0.0,
+//         "upvotes": item["upvotes"] ?? 0,
+//         "hasUpvoted": item["has_upvoted"] ?? false,
+//         "supported": item["supported"] ?? false,
+//         "comments":
+//             List<String>.from(item["comments"] ?? <String>[]),
+//       });
+//     }
+
+//     setState(() {
+//       feed = tempFeed;
+//     });
+//   } catch (e) {
+//     debugPrint("GET ERROR: $e");
+//   }
+// }
+
+
+//   // =======================
+//   // POST LIKE
+//   // =======================
+//   Future<void> _postLike(int id) async {
+//     try {
+//       await dio.post("$url/ComplaintLikeAPI/$loginid",data: {"ComplaintId":id});
+//     } catch (e) {
+//       debugPrint("LIKE ERROR: $e");
+//     }
+//   }
+
+//   // =======================
+//   // POST COMMENT
+//   // =======================
+//   Future<void> _postComment(int id, String comment) async {
+//     try {
+//       await dio.post(
+//         "$url/ComplaintCommentAPI/$loginid",
+//         data: {
+//           "comp_id": id,
+//           "comment": comment},
+//       );
+//     } catch (e) {
+//       debugPrint("COMMENT ERROR: $e");
+//     }
+//   }
+
+//   // =======================
+//   // SORTING HELPERS (UNCHANGED)
+//   // =======================
+//   List<Map<String, dynamic>> _getTrending() {
+//     List<Map<String, dynamic>> sorted = [...feed];
+//     sorted.sort((a, b) => b["upvotes"].compareTo(a["upvotes"]));
+//     return sorted.take(3).toList();
+//   }
+
+//   List<Map<String, dynamic>> _getFilteredFeed() {
+//     List<Map<String, dynamic>> filtered = feed.where((post) {
+//       if (selectedCategory == "All Categories") return true;
+//       return post["category"] == selectedCategory;
+//     }).toList();
+
+//     if (selectedSort == "Nearby") {
+//       filtered.sort((a, b) => a["distanceKm"].compareTo(b["distanceKm"]));
+//     } else {
+//       filtered.sort((a, b) => a["minutesAgo"].compareTo(b["minutesAgo"]));
+//     }
+
+//     return filtered;
+//   }
+
+//   // =======================
+//   // UI (UNCHANGED)
+//   // =======================
+//   @override
+//   Widget build(BuildContext context) {
+//     final trending = _getTrending();
+//     final filteredFeed = _getFilteredFeed();
+
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text("Community",
+//             style: TextStyle(fontWeight: FontWeight.w600)),
+//         elevation: 0,
+//         backgroundColor: Colors.white,
+//         foregroundColor: Colors.black,
+//         centerTitle: true,
+//       ),
+//       body: feed.isEmpty
+//           ? const Center(child: CircularProgressIndicator())
+//           : SingleChildScrollView(
+//               padding: const EdgeInsets.all(16),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const Text("Community Feed",
+//                       style:
+//                           TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+//                   const SizedBox(height: 4),
+//                   Text("Verify, support, and collaborate on civic issues.",
+//                       style: TextStyle(color: Colors.grey[700])),
+
+//                   const SizedBox(height: 20),
+
+//                   Row(
+//                     children: [
+//                       Icon(Icons.trending_up, color: accentColor),
+//                       const SizedBox(width: 6),
+//                       const Text("Trending Issues",
+//                           style: TextStyle(
+//                               fontSize: 18, fontWeight: FontWeight.w700)),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 12),
+
+//                   SizedBox(
+//                     height: 170,
+//                     child: ListView.separated(
+//                       scrollDirection: Axis.horizontal,
+//                       itemCount: trending.length,
+//                       separatorBuilder: (_, __) =>
+//                           const SizedBox(width: 12),
+//                       itemBuilder: (context, i) =>
+//                           _buildTrendingCard(trending[i], i + 1),
+//                     ),
+//                   ),
+
+//                   const SizedBox(height: 24),
+//                   _buildFilterBar(),
+//                   const SizedBox(height: 24),
+
+//                   ListView.builder(
+//                     shrinkWrap: true,
+//                     physics: const NeverScrollableScrollPhysics(),
+//                     itemCount: filteredFeed.length,
+//                     itemBuilder: (context, i) =>
+//                         _buildPostCard(filteredFeed[i], context),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//     );
+//   }
+
+//   // =======================
+//   // POST CARD (LIKE API)
+//   // =======================
+//   Color _getStatusColor(String status) {
+//   switch (status.toLowerCase()) {
+//     case "pending":
+//       return Colors.orange;
+//     case "Assigned":
+//       return Colors.blue;
+//     case "Resolved":
+//       return Colors.green;
+//     case "Rejected":
+//       return Colors.red;
+//     default:
+//       return Colors.grey;
+//   }
+// }
+
+//   Widget _buildPostCard(Map<String, dynamic> post, BuildContext context) {
+//     final List<String> comments = post["comments"];
+
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 18),
+//       decoration: BoxDecoration(
+//         color: const Color(0xFFF7F7F7),
+//         borderRadius: BorderRadius.circular(18),
+//         border: Border.all(color: Colors.grey.shade300),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Padding(
+//             padding: const EdgeInsets.all(12),
+//             child: Row(
+//               children: [
+//                 CircleAvatar(
+//                   backgroundColor: accentColor.withOpacity(0.15),
+//                   child: const Icon(Icons.person),
+//                 ),
+//                 const SizedBox(width: 10),
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(post["username"],
+//                         style: const TextStyle(fontWeight: FontWeight.w600)),
+//                     Text("${post["location"]} •",
+//                         style:
+//                             TextStyle(color: Colors.grey[600], fontSize: 12)),
+//                              Text("${post["time"]} •",
+//                         style:
+//                             TextStyle(color: Colors.grey[600], fontSize: 12)),
+//                   ],
+//                 )
+//               ],
+//             ),
+//           ),
+
+//           Image.network( url+ post["imageUrl"],
+//               height: 220, width: double.infinity, fit: BoxFit.cover),
+
+//           const SizedBox(height: 10),
+
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 12),
+//             child: Text(post["Category"],
+//                 style: const TextStyle(
+//                     fontSize: 20, fontWeight: FontWeight.bold)),
+//           ),
+
+//          Padding(
+//   padding: const EdgeInsets.symmetric(horizontal: 12),
+//   child: Row(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       // DESCRIPTION
+//       Expanded(
+//         child: Text(
+//           post["description"],
+//           style: TextStyle(
+//             color: Colors.grey[800],
+//             fontSize: 14,
+//           ),
+//         ),
+//       ),
+
+//       const SizedBox(width: 10),
+
+//       // STATUS CHIP
+//       Container(
+//         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//         decoration: BoxDecoration(
+//           color: _getStatusColor(post["Status"]).withOpacity(0.15),
+//           borderRadius: BorderRadius.circular(20),
+//           border: Border.all(
+//             color: _getStatusColor(post["Status"]),
+//           ),
+//         ),
+//         child: Text(
+//           post["Status"],
+//           style: TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.w600,
+//             color: _getStatusColor(post["Status"]),
+//           ),
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
+
+//           Padding(
+//             padding: const EdgeInsets.all(12),
+//             child: Row(
+//               children: [
+//                 InkWell(
+//                   onTap: () {
+//                     setState(() {
+//                       post["hasUpvoted"] = !post["hasUpvoted"];
+//                       post["upvotes"] += post["hasUpvoted"] ? 1 : -1;
+//                     });
+//                     _postLike(post["id"]);
+//                   },
+//                   child: Row(
+//                     children: [
+//                       Icon(
+//                         post["hasUpvoted"]
+//                             ? Icons.thumb_up
+//                             : Icons.thumb_up_outlined,
+//                         color: accentColor,
+//                       ),
+//                       const SizedBox(width: 6),
+//                       Text(post["upvotes"].toString()),
+//                     ],
+//                   ),
+//                 ),
+//                 const Spacer(),
+//                 InkWell(
+//                   onTap: () => _openCommentsSheet(post),
+//                   child: Text("Comments (${comments.length})"),
+//                 ),
+//               ],
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+
+//   // =======================
+//   // COMMENTS (POST API)
+//   // =======================
+//   void _openCommentsSheet(Map<String, dynamic> post) {
+//     final controller = TextEditingController();
+
+//     showModalBottomSheet(
+//       context: context,
+//       isScrollControlled: true,
+//       builder: (_) => Padding(
+//         padding:
+//             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Expanded(
+//               child: ListView.builder(
+//                 itemCount: post["comments"].length,
+//                 itemBuilder: (_, i) =>
+//                     ListTile(title: Text(post["comments"][i])),
+//               ),
+//             ),
+//             Row(
+//               children: [
+//                 Expanded(
+//                   child: TextField(
+//                     controller: controller,
+//                     decoration:
+//                         const InputDecoration(hintText: "Add comment"),
+//                   ),
+//                 ),
+//                 IconButton(
+//                   icon: const Icon(Icons.send),
+//                   onPressed: () {
+//                     final text = controller.text.trim();
+//                     if (text.isEmpty) return;
+
+//                     setState(() => post["comments"].add(text));
+//                     _postComment(post["id"], text);
+//                     controller.clear();
+//                   },
+//                 )
+//               ],
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   // =======================
+//   // FILTER BAR (UNCHANGED)
+//   // =======================
+//   Widget _buildFilterBar() {
+//     return Container(
+//       padding: const EdgeInsets.all(14),
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(18),
+//         border: Border.all(color: Colors.grey.shade300),
+//       ),
+//       child: Row(
+//         children: [
+//           DropdownButtonHideUnderline(
+//             child: DropdownButton<String>(
+//               value: selectedSort,
+//               items: const [
+//                 DropdownMenuItem(value: "Nearby", child: Text("Nearby")),
+//                 DropdownMenuItem(value: "Recent", child: Text("Recent")),
+//               ],
+//               onChanged: (v) => setState(() => selectedSort = v!),
+//             ),
+//           ),
+//           const SizedBox(width: 10),
+//           DropdownButtonHideUnderline(
+//             child: DropdownButton<String>(
+//               value: selectedCategory,
+//               items: categories
+//                   .map((c) =>
+//                       DropdownMenuItem(value: c, child: Text(c)))
+//                   .toList(),
+//               onChanged: (v) => setState(() => selectedCategory = v!),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   // =======================
+//   // TRENDING CARD (UNCHANGED)
+//   // =======================
+//   Widget _buildTrendingCard(Map<String, dynamic> post, int rank) {
+//     return Container(
+//       width: 260,
+//       padding: const EdgeInsets.all(14),
+//       decoration: BoxDecoration(
+//         gradient: const LinearGradient(
+//           colors: [Color(0xFF003B5C), Color(0xFF00695C)],
+//         ),
+//         borderRadius: BorderRadius.circular(18),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text("#$rank Trending",
+//               style: const TextStyle(color: Colors.white)),
+//           const SizedBox(height: 8),
+//           Text(post["title"],
+//               style: const TextStyle(
+//                   color: Colors.white, fontWeight: FontWeight.bold)),
+//         ],
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:citywatchapp/API/loginAPI.dart';
+import 'package:citywatchapp/API/registerAPi.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
@@ -647,18 +1209,17 @@ class CommunityPage extends StatefulWidget {
 class _CommunityPageState extends State<CommunityPage> {
   final Color accentColor = const Color(0xFF00B4D8);
 
-  // =======================
-  // DIO CONFIG
-  // =======================
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: "https://YOUR_DOMAIN.com/api", // 🔴 CHANGE
+      baseUrl: "https://YOUR_DOMAIN.com/api",
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ),
   );
 
-  // SORT & FILTER STATE
+  // =======================
+  // FILTER STATE
+  // =======================
   String selectedSort = "Nearby";
   String selectedCategory = "All Categories";
 
@@ -671,14 +1232,8 @@ class _CommunityPageState extends State<CommunityPage> {
     "Street Light",
   ];
 
-  // =======================
-  // FEED DATA (API ONLY)
-  // =======================
   List<Map<String, dynamic>> feed = [];
 
-  // =======================
-  // INIT
-  // =======================
   @override
   void initState() {
     super.initState();
@@ -686,147 +1241,96 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 
   // =======================
-  // GET COMPLAINTS
+  // LOCATION
   // =======================
-  Future<String> getLocationName(double lat, double lon) async {
-  try {
-    final response = await dio.get(
-      "https://nominatim.openstreetmap.org/reverse",
-      queryParameters: {
-        "lat": lat,
-        "lon": lon,
-        "format": "json",
-      },
-      options: Options(
-        headers: {
-          // IMPORTANT: Nominatim requires User-Agent
-          "User-Agent": "citywatch-app",
+  Future<String> _getLocationFromLatLng(double? lat, double? lng) async {
+    if (lat == null || lng == null) return "Unknown location";
+
+    try {
+      final response = await Dio().get(
+        "https://nominatim.openstreetmap.org/reverse",
+        queryParameters: {
+          "lat": lat,
+          "lon": lng,
+          "format": "json",
         },
-      ),
-    );
+        options: Options(headers: {"User-Agent": "citywatch-app"}),
+      );
 
-    final address = response.data["address"];
-
-    return [
-      address["road"],
-      address["suburb"],
-      address["city"] ?? address["town"] ?? address["village"],
-    ].where((e) => e != null).join(", ");
-  } catch (e) {
-    debugPrint("Location error: $e");
-    return "Unknown location";
-  }
-}Future<String> _getLocationFromLatLng(
-  double? lat,
-  double? lng,
-) async {
-  if (lat == null || lng == null) return "Unknown location";
-
-  try {
-    final response = await Dio().get(
-      "https://nominatim.openstreetmap.org/reverse",
-      queryParameters: {
-        "lat": lat,
-        "lon": lng,
-        "format": "json",
-      },
-      options: Options(
-        headers: {
-          "User-Agent": "citywatch-app", // REQUIRED
-        },
-      ),
-    );
-
-    final address = response.data["address"];
-
-    return [
-      address?["road"],
-      address?["suburb"],
-      address?["city"] ??
-          address?["town"] ??
-          address?["village"],
-    ].where((e) => e != null && e.toString().isNotEmpty).join(", ");
-  } catch (e) {
-    debugPrint("Location error: $e");
-    return "Unknown location";
-  }
-}
-
-Future<void> _fetchComplaints() async {
-  try {
-    final response = await dio.get("$url/view-allcomplaints");
-    print(response.data);
-
-    final List data = response.data ?? [];
-    List<Map<String, dynamic>> tempFeed = [];
-
-    for (var item in data) {
-      final double? lat = item["Latitude"] != null
-          ? double.tryParse(item["Latitude"].toString())
-          : null;
-
-      final double? lng = item["Longitude"] != null
-          ? double.tryParse(item["Longitude"].toString())
-          : null;
-
-      final String location =
-          await _getLocationFromLatLng(lat, lng);
-
-      tempFeed.add({
-        "id": item["id"] ?? 0,
-        "username": item["Name"] ?? "Unknown",
-
-        // ✅ LOCATION ADDED HERE
-        "location": location,
-
-        "category": item["Category"] ?? "Other",
-        "title": item["title"] ?? "",
-        "description": item["Description"] ?? "",
-        "Category": item["Category"] ?? "",
-        "Status": item["Status"] ?? "",
-        "imageUrl": item["Image"] ??
-            "https://via.placeholder.com/400x250",
-        "time": item["SubmitDate"] ?? "",
-        "minutesAgo": item["minutes_ago"] ?? 0,
-        "distanceKm": item["distance_km"] ?? 0.0,
-        "upvotes": item["upvotes"] ?? 0,
-        "hasUpvoted": item["has_upvoted"] ?? false,
-        "supported": item["supported"] ?? false,
-        "comments":
-            List<String>.from(item["comments"] ?? <String>[]),
-      });
+      final address = response.data["address"];
+      return [
+        address?["road"],
+        address?["suburb"],
+        address?["city"] ?? address?["town"] ?? address?["village"],
+      ].where((e) => e != null).join(", ");
+    } catch (_) {
+      return "Unknown location";
     }
-
-    setState(() {
-      feed = tempFeed;
-    });
-  } catch (e) {
-    debugPrint("GET ERROR: $e");
   }
-}
-
 
   // =======================
-  // POST LIKE
+  // FETCH COMPLAINTS
+  // =======================
+  Future<void> _fetchComplaints() async {
+    try {
+      final response = await dio.get("$url/view-allcomplaints");
+      final List data = response.data ?? [];
+
+      List<Map<String, dynamic>> tempFeed = [];
+
+      for (var item in data) {
+        final lat = double.tryParse(item["Latitude"]?.toString() ?? "");
+        final lng = double.tryParse(item["Longitude"]?.toString() ?? "");
+
+        final location = await _getLocationFromLatLng(lat, lng);
+
+        tempFeed.add({
+          "id": item["id"],
+          "username": item["Name"] ?? "Unknown",
+          "location": location,
+          "Category": item["Category"],
+          "Status": item["Status"],
+          "description": item["Description"],
+          "imageUrl": item["Image"],
+          "time": item["SubmitDate"],
+
+          "upvotes": item["total_likes"] ?? 0,
+
+          "comments": List<Map<String, dynamic>>.from(
+            item["comments"] ?? [],
+          ),
+        });
+      }
+
+      setState(() => feed = tempFeed);
+    } catch (e) {
+      debugPrint("GET ERROR: $e");
+    }
+  }
+
+  // =======================
+  // LIKE
   // =======================
   Future<void> _postLike(int id) async {
     try {
-      await dio.post("$url/ComplaintLikeAPI/$loginid",data: {"ComplaintId":id});
+      await dio.post(
+        "$url/ComplaintLikeAPI/$loginid",
+        data: {"ComplaintId": id},
+      );
+      
     } catch (e) {
       debugPrint("LIKE ERROR: $e");
     }
   }
 
   // =======================
-  // POST COMMENT
+  // COMMENT
   // =======================
   Future<void> _postComment(int id, String comment) async {
     try {
       await dio.post(
         "$url/ComplaintCommentAPI/$loginid",
-        data: {
-          "comp_id": id,
-          "comment": comment},
+        data: {"comp_id": id, "comment": comment},
       );
     } catch (e) {
       debugPrint("COMMENT ERROR: $e");
@@ -834,7 +1338,7 @@ Future<void> _fetchComplaints() async {
   }
 
   // =======================
-  // SORTING HELPERS (UNCHANGED)
+  // HELPERS
   // =======================
   List<Map<String, dynamic>> _getTrending() {
     List<Map<String, dynamic>> sorted = [...feed];
@@ -845,20 +1349,29 @@ Future<void> _fetchComplaints() async {
   List<Map<String, dynamic>> _getFilteredFeed() {
     List<Map<String, dynamic>> filtered = feed.where((post) {
       if (selectedCategory == "All Categories") return true;
-      return post["category"] == selectedCategory;
+      return post["Category"] == selectedCategory;
     }).toList();
-
-    if (selectedSort == "Nearby") {
-      filtered.sort((a, b) => a["distanceKm"].compareTo(b["distanceKm"]));
-    } else {
-      filtered.sort((a, b) => a["minutesAgo"].compareTo(b["minutesAgo"]));
-    }
 
     return filtered;
   }
 
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return Colors.orange;
+      case "assigned":
+        return Colors.blue;
+      case "resolved":
+        return Colors.green;
+      case "rejected":
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
   // =======================
-  // UI (UNCHANGED)
+  // UI
   // =======================
   @override
   Widget build(BuildContext context) {
@@ -866,15 +1379,7 @@ Future<void> _fetchComplaints() async {
     final filteredFeed = _getFilteredFeed();
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Community",
-            style: TextStyle(fontWeight: FontWeight.w600)),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Community")),
       body: feed.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -882,48 +1387,41 @@ Future<void> _fetchComplaints() async {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Community Feed",
-                      style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text("Verify, support, and collaborate on civic issues.",
-                      style: TextStyle(color: Colors.grey[700])),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      Icon(Icons.trending_up, color: accentColor),
-                      const SizedBox(width: 6),
-                      const Text("Trending Issues",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w700)),
-                    ],
+                  const Text(
+                    "Community Feed",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
 
+                  // ================= TRENDING =================
+                  const Text("Trending Issues",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 10),
+
                   SizedBox(
-                    height: 170,
+                    height: 160,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: trending.length,
                       separatorBuilder: (_, __) =>
                           const SizedBox(width: 12),
-                      itemBuilder: (context, i) =>
-                          _buildTrendingCard(trending[i], i + 1),
+                      itemBuilder: (_, i) => _buildTrendingCard(trending[i]),
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
+
                   _buildFilterBar(),
-                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 20),
 
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: filteredFeed.length,
-                    itemBuilder: (context, i) =>
-                        _buildPostCard(filteredFeed[i], context),
+                    itemBuilder: (_, i) =>
+                        _buildPostCard(filteredFeed[i]),
                   ),
                 ],
               ),
@@ -932,114 +1430,44 @@ Future<void> _fetchComplaints() async {
   }
 
   // =======================
-  // POST CARD (LIKE API)
+  // POST CARD
   // =======================
-  Color _getStatusColor(String status) {
-  switch (status.toLowerCase()) {
-    case "pending":
-      return Colors.orange;
-    case "Assigned":
-      return Colors.blue;
-    case "Resolved":
-      return Colors.green;
-    case "Rejected":
-      return Colors.red;
-    default:
-      return Colors.grey;
-  }
-}
+  Widget _buildPostCard(Map<String, dynamic> post) {
+    final comments =
+        List<Map<String, dynamic>>.from(post["comments"]);
 
-  Widget _buildPostCard(Map<String, dynamic> post, BuildContext context) {
-    final List<String> comments = post["comments"];
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: accentColor.withOpacity(0.15),
-                  child: const Icon(Icons.person),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(post["username"],
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    Text("${post["location"]} •",
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 12)),
-                             Text("${post["time"]} •",
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 12)),
-                  ],
-                )
-              ],
-            ),
+          ListTile(
+            leading: const CircleAvatar(child: Icon(Icons.person)),
+            title: Text(post["username"]),
+            subtitle: Text(post["location"]),
           ),
 
-          Image.network( url+ post["imageUrl"],
-              height: 220, width: double.infinity, fit: BoxFit.cover),
+          Image.network(
+            url + post["imageUrl"],
+            height: 220,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
 
-          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(post["description"]),
+          ),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(post["Category"],
-                style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold)),
+            child: Chip(
+              label: Text(post["Status"]),
+              backgroundColor:
+                  _getStatusColor(post["Status"]).withOpacity(0.15),
+            ),
           ),
-
-         Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 12),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      // DESCRIPTION
-      Expanded(
-        child: Text(
-          post["description"],
-          style: TextStyle(
-            color: Colors.grey[800],
-            fontSize: 14,
-          ),
-        ),
-      ),
-
-      const SizedBox(width: 10),
-
-      // STATUS CHIP
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: _getStatusColor(post["Status"]).withOpacity(0.15),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: _getStatusColor(post["Status"]),
-          ),
-        ),
-        child: Text(
-          post["Status"],
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: _getStatusColor(post["Status"]),
-          ),
-        ),
-      ),
-    ],
-  ),
-),
 
           Padding(
             padding: const EdgeInsets.all(12),
@@ -1047,20 +1475,12 @@ Future<void> _fetchComplaints() async {
               children: [
                 InkWell(
                   onTap: () {
-                    setState(() {
-                      post["hasUpvoted"] = !post["hasUpvoted"];
-                      post["upvotes"] += post["hasUpvoted"] ? 1 : -1;
-                    });
+                    setState(() => post["upvotes"]++);
                     _postLike(post["id"]);
                   },
                   child: Row(
                     children: [
-                      Icon(
-                        post["hasUpvoted"]
-                            ? Icons.thumb_up
-                            : Icons.thumb_up_outlined,
-                        color: accentColor,
-                      ),
+                      Icon(Icons.thumb_up, color: accentColor),
                       const SizedBox(width: 6),
                       Text(post["upvotes"].toString()),
                     ],
@@ -1073,14 +1493,14 @@ Future<void> _fetchComplaints() async {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
   // =======================
-  // COMMENTS (POST API)
+  // COMMENTS
   // =======================
   void _openCommentsSheet(Map<String, dynamic> post) {
     final controller = TextEditingController();
@@ -1089,16 +1509,17 @@ Future<void> _fetchComplaints() async {
       context: context,
       isScrollControlled: true,
       builder: (_) => Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
               child: ListView.builder(
                 itemCount: post["comments"].length,
-                itemBuilder: (_, i) =>
-                    ListTile(title: Text(post["comments"][i])),
+                itemBuilder: (_, i) => ListTile(
+                  title: Text(post["comments"][i]["CommentText"]),
+                  subtitle: Text(post["comments"][i]["user_name"]),
+                ),
               ),
             ),
             Row(
@@ -1116,7 +1537,15 @@ Future<void> _fetchComplaints() async {
                     final text = controller.text.trim();
                     if (text.isEmpty) return;
 
-                    setState(() => post["comments"].add(text));
+                    setState(() {
+                      post["comments"].add({
+                        "CommentText": text,
+                        "user_name": "You",
+                        "CreatedAt":
+                            DateTime.now().toIso8601String(),
+                      });
+                    });
+
                     _postComment(post["id"], text);
                     controller.clear();
                   },
@@ -1130,28 +1559,17 @@ Future<void> _fetchComplaints() async {
   }
 
   // =======================
-  // FILTER BAR (UNCHANGED)
+  // FILTER BAR
   // =======================
   Widget _buildFilterBar() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Row(
         children: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedSort,
-              items: const [
-                DropdownMenuItem(value: "Nearby", child: Text("Nearby")),
-                DropdownMenuItem(value: "Recent", child: Text("Recent")),
-              ],
-              onChanged: (v) => setState(() => selectedSort = v!),
-            ),
-          ),
-          const SizedBox(width: 10),
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedCategory,
@@ -1168,27 +1586,30 @@ Future<void> _fetchComplaints() async {
   }
 
   // =======================
-  // TRENDING CARD (UNCHANGED)
+  // TRENDING CARD
   // =======================
-  Widget _buildTrendingCard(Map<String, dynamic> post, int rank) {
+  Widget _buildTrendingCard(Map<String, dynamic> post) {
     return Container(
-      width: 260,
+      width: 240,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF003B5C), Color(0xFF00695C)],
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("#$rank Trending",
+          Text(post["Category"],
               style: const TextStyle(color: Colors.white)),
           const SizedBox(height: 8),
-          Text(post["title"],
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold)),
+          Text(
+            post["description"],
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.white),
+          ),
         ],
       ),
     );

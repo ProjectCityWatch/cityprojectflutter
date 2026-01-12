@@ -13,18 +13,12 @@ class MyComplaintsPage extends StatefulWidget {
   State<MyComplaintsPage> createState() => _MyComplaintsPageState();
 }
 
-// ===============================
-// DIO INSTANCE
-// ===============================
 final Dio dio = Dio();
 
-// ===============================
-// DIO GET API – FETCH MY COMPLAINTS
-// ===============================
 Future<List<Map<String, String>>> fetchMyComplaints() async {
   try {
     final response = await dio.get("$url/send-complaint/$loginid");
-print(response.data);
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       return List<Map<String, String>>.from(
         response.data.map((e) => {
@@ -47,14 +41,13 @@ print(response.data);
 }
 
 class _MyComplaintsPageState extends State<MyComplaintsPage> {
-  // ===============================
-  // COUNTS
-  // ===============================
   int total = 0;
   int pending = 0;
   int assigned = 0;
   int inProgress = 0;
   int resolved = 0;
+  int datefixed = 0;
+  int extended = 0;
 
   String statusFilter = "All";
   String categoryFilter = "All";
@@ -71,27 +64,20 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
           complaint = apiData;
 
           total = complaint.length;
-
-          pending = complaint
-              .where((c) => c["Status"]!.toLowerCase() == "pending")
-              .length;
-
-          assigned = complaint
-              .where((c) => c["Status"]!.toLowerCase() == "assigned")
-              .length;
-
-          inProgress = complaint
-              .where((c) => c["Status"]!.toLowerCase() == "in progress")
-              .length;
-
-          resolved = complaint
-              .where((c) => c["Status"]!.toLowerCase() == "resolved")
-              .length;
+          pending = complaint.where((c) => c["Status"]!.toLowerCase() == "pending").length;
+          assigned = complaint.where((c) => c["Status"]!.toLowerCase() == "assigned").length;
+          inProgress = complaint.where((c) => c["Status"]!.toLowerCase() == "in progress").length;
+          resolved = complaint.where((c) => c["Status"]!.toLowerCase() == "resolved").length;
+          datefixed = complaint.where((c) => c["Status"]!.toLowerCase() == "date fixed").length;
+          extended = complaint.where((c) => c["Status"]!.toLowerCase() == "extended").length;
         });
       }
     });
   }
 
+  // ===============================
+  // STATUS COLORS (UNCHANGED)
+  // ===============================
   Color statusColor(String status) {
     switch (status.toLowerCase()) {
       case "pending":
@@ -100,6 +86,10 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
         return Colors.purple;
       case "in progress":
         return Colors.blue;
+      case "date fixed":
+        return Colors.red;
+      case "extended":
+        return Colors.yellow.shade700;
       default:
         return Colors.green;
     }
@@ -109,17 +99,34 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
   Widget build(BuildContext context) {
     final filteredList = complaint.where((c) {
       final matchStatus =
-          statusFilter == "All" || c["Status"] == statusFilter;
+          statusFilter == "All" ||
+          c["Status"]!.toLowerCase() == statusFilter.toLowerCase();
+
       final matchCategory =
           categoryFilter == "All" || c["Category"] == categoryFilter;
+
       return matchStatus && matchCategory;
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF3F4F8),
       appBar: AppBar(
-        title: const Text("My Complaints"),
-        backgroundColor: const Color(0xFF009DCC),
+        elevation: 0,
+        centerTitle: true,
+        title: const Text("My Complaints",
+        style: TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+  ),
+        ),
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -130,23 +137,14 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
           // ===============================
           Row(
             children: [
-              Expanded(
-                child: _bigStatCard(
-                    "Total Complaints", total, Colors.blue[800]!),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _bigStatCard(
-                    "Resolved", resolved, Colors.green),
-              ),
+              Expanded(child: _bigStatCard("Total", total)),
+              const SizedBox(width: 12),
+              Expanded(child: _bigStatCard("Resolved", resolved)),
             ],
           ),
 
-          const SizedBox(height: 15),
+          const SizedBox(height: 16),
 
-          // ===============================
-          // SMALL STATS (ORDER CHANGED)
-          // ===============================
           Row(children: [
             Expanded(child: _statCard("Pending", pending, Colors.orange)),
             const SizedBox(width: 10),
@@ -155,14 +153,95 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
             Expanded(child: _statCard("In Progress", inProgress, Colors.blue)),
           ]),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 10),
 
-          const Text(
-            "Your Complaints",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Row(children: [
+            Expanded(child: _statCard("Date Fixed", datefixed, Colors.red)),
+            const SizedBox(width: 10),
+            Expanded(child: _statCard("Extended", extended, Colors.yellow.shade700)),
+          ]),
+
+          const SizedBox(height: 28),
+
+          // ===============================
+          // FILTER PANEL
+          // ===============================
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: statusFilter,
+                    decoration: InputDecoration(
+                      labelText: "Status",
+                      filled: true,
+                      fillColor: const Color(0xFFF1F3FF),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: const [
+                      "All",
+                      "Pending",
+                      "Assigned",
+                      "In Progress",
+                      "Resolved",
+                      "Date Fixed",
+                      "Extended",
+                    ]
+                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                        .toList(),
+                    onChanged: (value) => setState(() => statusFilter = value!),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: categoryFilter,
+                    decoration: InputDecoration(
+                      labelText: "Category",
+                      filled: true,
+                      fillColor: const Color(0xFFF1F3FF),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: [
+                      "All",
+                      ...complaint.map((c) => c["Category"]!).toSet(),
+                    ]
+                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                        .toList(),
+                    onChanged: (value) => setState(() => categoryFilter = value!),
+                  ),
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SizedBox(height: 24),
+
+          Text(
+            "Your Complaints (${filteredList.length})",
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 16),
 
           // ===============================
           // COMPLAINT LIST
@@ -175,83 +254,88 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
               final c = filteredList[index];
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 15),
+                margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                    )
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 12,
+                    ),
                   ],
                 ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              c["Category"]!,
-                              style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: statusColor(c["Status"]!)
-                                    .withOpacity(0.15),
-                              ),
-                              child: Text(
-                                c["Status"]!,
-                                style: TextStyle(
-                                  color:
-                                      statusColor(c["Status"]!),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ]),
-                      const SizedBox(height: 10),
                       Text(
-                        c["Description"]!,
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey[700]),
+                        c["Category"]!,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Submitted: ${c["SubmitDate"]}",
-                        style:
-                            TextStyle(color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ComplaintDetailsPage(
-                                  complaintid:
-                                      c['id'].toString(),
-                                ),
-                              ),
-                            );
-                          },
-                          child:
-                              const Text("View Details →"),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: statusColor(c["Status"]!).withOpacity(0.15),
+                        ),
+                        child: Text(
+                          c["Status"]!,
+                          style: TextStyle(
+                            color: statusColor(c["Status"]!),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
-                    ]),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    c["Description"]!,
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Submitted: ${c["SubmitDate"]}",
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ===============================
+                  // VIEW DETAILS BUTTON (FIXED)
+                  // ===============================
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF6A11CB), width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ComplaintDetailsPage(
+                              complaintid: c['id'].toString(),
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "View Details",
+                        style: TextStyle(
+                          color: Color(0xFF6A11CB),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
               );
             },
           ),
@@ -263,29 +347,25 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
   // ===============================
   // UI HELPERS
   // ===============================
-  Widget _bigStatCard(String title, int count, Color color) {
+  Widget _bigStatCard(String title, int count) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10),
-        ],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+        ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(children: [
-        Text(title,
-            style: TextStyle(
-                color: color, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
+        Text(title, style: const TextStyle(color: Colors.white70)),
+        const SizedBox(height: 8),
         Text(
           "$count",
-          style: TextStyle(
-              fontSize: 42,
-              fontWeight: FontWeight.bold,
-              color: color),
+          style: const TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ]),
     );
@@ -293,27 +373,17 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
 
   Widget _statCard(String title, int count, Color color) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 5),
-        ],
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(children: [
-        Text(title,
-            style: TextStyle(
-                color: color, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
         Text(
           "$count",
-          style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: color),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
       ]),
     );

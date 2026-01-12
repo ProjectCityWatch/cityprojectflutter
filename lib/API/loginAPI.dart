@@ -35,9 +35,9 @@ Future<void> Loginapi({
         const SnackBar(content: Text("Login successful")),
       );
 loginid=response.data["userId"];
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),(route) => false,
       );
       return;
     }

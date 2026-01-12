@@ -10,129 +10,133 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // CONTROLLERS
-  TextEditingController name = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  TextEditingController password = TextEditingController();
-  TextEditingController conpassword = TextEditingController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController phone = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final TextEditingController conpassword = TextEditingController();
+
+  void _register() {
+    final pass = password.text.trim();
+    final confirm = conpassword.text.trim();
+    final phoneNumber = phone.text.trim();
+
+    // 📱 PHONE NUMBER VALIDATION (10 DIGITS)
+    if (phoneNumber.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Phone number must be exactly 10 digits"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // 🔒 PASSWORD LENGTH CHECK
+    if (pass.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 8 characters long"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // 🔒 PASSWORD MATCH CHECK
+    if (pass != confirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Passwords do not match"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // ✅ CALL API ONLY IF VALID
+    Registerapi(
+      Name: name.text.trim(),
+      Phone: phoneNumber,
+      Email: email.text.trim(),
+      Password: pass,
+      context: context,
+    );
+
+    debugPrint("REGISTER API CALLED");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-
+      backgroundColor: const Color(0xFFF4F6FB),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
 
               // TITLE
-              Text(
+              const Text(
                 "Create Account",
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 34,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
+                  color: Color(0xFF2E3A8C),
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
               Text(
                 "Register to get started",
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
 
               const SizedBox(height: 40),
 
-              // NAME
-              TextFormField(
+              _inputField(
                 controller: name,
-                decoration: InputDecoration(
-                  labelText: "Full Name",
-                  prefixIcon: const Icon(Icons.person_outline),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: "Full Name",
+                icon: Icons.person_outline,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // EMAIL
-              TextFormField(
+              _inputField(
                 controller: email,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: "Email",
+                icon: Icons.email_outlined,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // PHONE
-              TextFormField(
+              _inputField(
                 controller: phone,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: "Phone Number",
-                  prefixIcon: const Icon(Icons.phone_outlined),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: "Phone Number",
+                icon: Icons.phone_outlined,
+                keyboard: TextInputType.phone,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // PASSWORD
-              TextFormField(
+              _inputField(
                 controller: password,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: "Password",
+                icon: Icons.lock_outline,
+                obscure: true,
+                
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // CONFIRM PASSWORD
-              TextFormField(
+              _inputField(
                 controller: conpassword,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Confirm Password",
-                  prefixIcon: const Icon(Icons.lock_reset_outlined),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: "Confirm Password",
+                icon: Icons.lock_reset_outlined,
+                obscure: true,
               ),
 
               const SizedBox(height: 30),
@@ -141,22 +145,14 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Registerapi(
-                      Name: name.text.trim(),
-                      Phone: phone.text.trim(),
-                      Email: email.text.trim(),
-                      Password: password.text.trim(),
-                      context: context,
-                    );
-                    print("REGISTER API CALLED");
-                  },
+                  onPressed: _register,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[800],
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF2E3A8C),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                     ),
+                    elevation: 3,
                   ),
                   child: const Text(
                     "Register",
@@ -165,7 +161,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 22),
 
               // LOGIN REDIRECT
               Row(
@@ -177,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color(0xFF2E3A8C),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -188,6 +184,35 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 40),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // ===============================
+  // REUSABLE INPUT FIELD
+  // ===============================
+  Widget _inputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscure = false,
+    TextInputType keyboard = TextInputType.text,
+    String? helper,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscure,
+      keyboardType: keyboard,
+      decoration: InputDecoration(
+        labelText: label,
+        helperText: helper,
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
       ),
     );
