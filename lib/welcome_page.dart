@@ -8,242 +8,162 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
+      backgroundColor: Colors.white,
+
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // =============================
-          // TOP HEADER WITH CENTER ICON
-          // =============================
+
+          // ----------------------------------------------------
+          // CLEAN TOP HERO (no box, no shadows)
+          // ----------------------------------------------------
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(22, 50, 22, 30),
+            padding: const EdgeInsets.only(top: 65, bottom: 40),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1A73E8),
-                  Color(0xFF6A1B9A),
-                ],
+                colors: [Color(0xFF00B4D8), Color(0xFF0077A7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(32),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(26),
+                bottomRight: Radius.circular(26),
               ),
             ),
-            child: Column(
-              children: const [
-                // CENTER ICON
-                CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.location_city_rounded,
-                    size: 34,
-                    color: Colors.white,
-                  ),
-                ),
-
-                SizedBox(height: 14),
-
+            child: const Column(
+              children: [
+                Icon(Icons.location_city_rounded, size: 80, color: Colors.white),
+                SizedBox(height: 10),
                 Text(
                   "CityWatch",
                   style: TextStyle(
                     fontSize: 28,
-                    fontWeight: FontWeight.w900,
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-
-                SizedBox(height: 6),
-
-                Text(
-                  "Report problems. Improve your city.",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
+                )
               ],
             ),
           ),
 
           const SizedBox(height: 30),
 
-          // =============================
-          // MAIN CONTENT
-          // =============================
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "What would you like to do?",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+          // ----------------------------------------------------
+          // SIMPLE WELCOME TEXT (clean & modern)
+          // ----------------------------------------------------
+          const Text(
+            "Welcome, Citizen!",
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF003B73),
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            "Helping you improve your city.",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black54,
+            ),
+          ),
 
-                  const SizedBox(height: 18),
+          const SizedBox(height: 45),
 
-                  // =============================
-                  // SUBMIT COMPLAINT TILE
-                  // =============================
-                  _featureTile(
-                    title: "Submit a Complaint",
-                    subtitle:
-                        "Report issues like road damage, waste dumping, water leakage, and more.",
-                    icon: Icons.report_problem_rounded,
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF1A73E8),
-                        Color(0xFF4F8EF7),
-                      ],
-                    ),
+          // ----------------------------------------------------
+          // TWO BIG SQUARE BUTTONS (very clean)
+          // ----------------------------------------------------
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 26),
+            child: Row(
+              children: [
+                // Submit Button
+                Expanded(
+                  child: GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const SubmitComplaintPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const SubmitComplaintPage()),
                       );
                     },
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // =============================
-                  // COMMUNITY TILE
-                  // =============================
-                  _featureTile(
-                    title: "Community Feed",
-                    subtitle:
-                        "View nearby complaints and support issues raised by others.",
-                    icon: Icons.people_alt_rounded,
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF6A1B9A),
-                        const Color(0xFF8E44AD),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CommunityPage(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // =============================
-                  // INFO STRIP
-                  // =============================
-                  Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.info_outline,
-                          color: Color(0xFF1A73E8),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            "Your complaints directly reach the responsible department.",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black87,
-                            ),
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00B4D8),
+                        borderRadius: BorderRadius.circular(10), // square edges
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Submit\nComplaint",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 40),
-                ],
+                const SizedBox(width: 20),
+
+                // Community Feed Button
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CommunityPage()),
+                      );
+                    },
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFF00B4D8),
+                          width: 2,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Community\nFeed",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF00A0C8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 40),
+
+          // ----------------------------------------------------
+          // SMALL SOFT FOOTNOTE TEXT (no boxes)
+          // ----------------------------------------------------
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 26),
+            child: Text(
+              "Track issues. Support nearby complaints. Stay updated.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black45,
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
 
-  // =============================
-  // FEATURE TILE
-  // =============================
-  Widget _featureTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required LinearGradient gradient,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(22),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.18),
-              blurRadius: 20,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              height: 52,
-              width: 52,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.2),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 28,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

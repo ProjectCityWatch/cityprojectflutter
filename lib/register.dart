@@ -69,10 +69,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: Colors.grey[100],
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 22),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -82,9 +82,9 @@ class _RegisterPageState extends State<RegisterPage> {
               const Text(
                 "Create Account",
                 style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E3A8C),
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0A6FBF),
                 ),
               ),
 
@@ -92,10 +92,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
               Text(
                 "Register to get started",
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 15, color: Colors.grey[600]),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 36),
 
               _inputField(
                 controller: name,
@@ -127,7 +127,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 label: "Password",
                 icon: Icons.lock_outline,
                 obscure: true,
-                
               ),
 
               const SizedBox(height: 18),
@@ -147,16 +146,21 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: ElevatedButton(
                   onPressed: _register,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2E3A8C),
+                    backgroundColor: const Color(0xFF009DCC),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    elevation: 3,
+                    elevation: 2,
                   ),
                   child: const Text(
                     "Register",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.6,
+                    ),
                   ),
                 ),
               ),
@@ -173,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                        color: Color(0xFF2E3A8C),
+                        color: Color(0xFF0A6FBF),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -207,7 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
       decoration: InputDecoration(
         labelText: label,
         helperText: helper,
-        prefixIcon: Icon(icon),
+        prefixIcon: Icon(icon, color: Colors.grey.shade700),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(

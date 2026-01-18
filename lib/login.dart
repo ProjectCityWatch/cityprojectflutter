@@ -19,20 +19,21 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
           // =============================
-          // BACKGROUND GRADIENT
+          // BACKGROUND HEADER (BLUE THEME)
           // =============================
           Container(
-            height: MediaQuery.of(context).size.height * 0.48,
+            height: MediaQuery.of(context).size.height * 0.45,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF1A73E8), // Blue
-                  Color(0xFF6A1B9A), // Purple
+                  Color(0xFF0A6FBF), // Darker blue
+                  Color(0xFF009DCC), // App primary
                 ],
               ),
             ),
@@ -54,18 +55,18 @@ class _LoginPageState extends State<LoginPage> {
                     // LOGO
                     // =============================
                     Container(
-                      height: 90,
-                      width: 90,
+                      height: 88,
+                      width: 88,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withOpacity(0.18),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.4),
                         ),
                       ),
                       child: const Icon(
                         Icons.location_city_rounded,
-                        size: 50,
+                        size: 48,
                         color: Colors.white,
                       ),
                     ),
@@ -76,10 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                     const Text(
                       "CityWatch",
                       style: TextStyle(
-                        fontSize: 34,
+                        fontSize: 32,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        letterSpacing: 1,
+                        letterSpacing: 0.8,
                       ),
                     ),
 
@@ -90,27 +91,20 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white70,
-                        letterSpacing: 0.4,
                       ),
                     ),
 
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 34),
 
                     // =============================
                     // LOGIN CARD
                     // =============================
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.18),
-                            blurRadius: 30,
-                            offset: const Offset(0, 18),
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: Colors.grey.shade300),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                             "Welcome Back",
                             style: TextStyle(
                               fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
 
@@ -209,7 +203,12 @@ class _LoginPageState extends State<LoginPage> {
                             alignment: Alignment.centerRight,
                             child: TextButton(
                               onPressed: () {},
-                              child: const Text("Forgot password?"),
+                              child: const Text(
+                                "Forgot password?",
+                                style: TextStyle(
+                                  color: Color(0xFF0A6FBF),
+                                ),
+                              ),
                             ),
                           ),
 
@@ -234,12 +233,12 @@ class _LoginPageState extends State<LoginPage> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 backgroundColor:
-                                    const Color(0xFF1A73E8),
+                                    const Color(0xFF009DCC),
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(18),
                                 ),
-                                elevation: 4,
+                                elevation: 2,
                               ),
                               child: const Text(
                                 "LOGIN",
@@ -271,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(
                             "Create Account",
                             style: TextStyle(
-                              color: Color(0xFF6A1B9A),
+                              color: Color(0xFF0A6FBF),
                               fontWeight: FontWeight.bold,
                             ),
                           ),

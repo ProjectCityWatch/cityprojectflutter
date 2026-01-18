@@ -140,7 +140,44 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
     setState(() {
       address = "${p.street}, ${p.locality}, ${p.administrativeArea}";
     });
-  }
+  }void _confirmLocation(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: const Text(
+        "Confirm Location",
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
+      content: const Text(
+        "Are you currently in the affected location?",
+        style: TextStyle(fontSize: 14),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); 
+          },
+          child: const Text("No"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context); // close dialog
+            pickLocation(); // ✅ original function
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF009DCC),
+          ),
+          child: const Text("Yes"),
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +356,7 @@ class _SubmitComplaintPageState extends State<SubmitComplaintPage> {
 
             // ⭐ FIXED BUTTON PADDING ⭐
             ElevatedButton.icon(
-              onPressed: pickLocation,
+onPressed: () => _confirmLocation(context),
               icon: const Padding(
                 padding: EdgeInsets.only(left: 8),
                 child: Icon(Icons.location_on_outlined, size: 20),

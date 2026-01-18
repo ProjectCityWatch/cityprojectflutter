@@ -32,61 +32,46 @@ class _HomePageState extends State<HomePage> {
       onWillPop: () async {
         if (_currentIndex != 0) {
           setState(() {
-            _currentIndex = 0; // Go back to Home
+            _currentIndex = 0;
           });
-          return false; // Prevent app exit
+          return false;
         }
-        return true; // Exit app from Home
+        return true;
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF4F6FA),
+        backgroundColor: Colors.grey[100],
 
         // =============================
-        // GRADIENT APP BAR (HOME ONLY)
+        // APP BAR (HOME ONLY)
         // =============================
         appBar: _currentIndex == 0
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(60),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF1A73E8),
-                        Color(0xFF6A1B9A),
-                      ],
-                    ),
-                  ),
-                  child: AppBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    title: const Text(
-                      "CityWatch",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
-                        color: Colors.white,
-                      ),
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.notifications_none_outlined,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const NotificationsPage(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+            ? AppBar(
+                elevation: 0,
+                backgroundColor: const Color(0xFF009DCC),
+                title: const Text(
+                  "CityWatch",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.6,
+                    color: Colors.white,
                   ),
                 ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_none_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               )
             : null,
 
@@ -96,28 +81,33 @@ class _HomePageState extends State<HomePage> {
         body: pages[_currentIndex],
 
         // =============================
-        // CUSTOM BOTTOM NAV BAR
+        // BOTTOM NAVIGATION BAR
         // =============================
         bottomNavigationBar: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 16,
-                offset: const Offset(0, -4),
+            border: Border(
+              top: BorderSide(
+                color: Colors.grey.shade300,
               ),
-            ],
+            ),
           ),
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
             elevation: 0,
             backgroundColor: Colors.white,
-            selectedItemColor: const Color(0xFF1A73E8),
+            selectedItemColor: const Color(0xFF009DCC),
             unselectedItemColor: Colors.grey.shade500,
             iconSize: 26,
+            selectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
             onTap: (index) {
               setState(() {
                 _currentIndex = index;

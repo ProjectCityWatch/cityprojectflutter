@@ -64,12 +64,18 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
           complaint = apiData;
 
           total = complaint.length;
-          pending = complaint.where((c) => c["Status"]!.toLowerCase() == "pending").length;
-          assigned = complaint.where((c) => c["Status"]!.toLowerCase() == "assigned").length;
-          inProgress = complaint.where((c) => c["Status"]!.toLowerCase() == "in progress").length;
-          resolved = complaint.where((c) => c["Status"]!.toLowerCase() == "resolved").length;
-          datefixed = complaint.where((c) => c["Status"]!.toLowerCase() == "date fixed").length;
-          extended = complaint.where((c) => c["Status"]!.toLowerCase() == "extended").length;
+          pending =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "pending").length;
+          assigned =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "assigned").length;
+          inProgress =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "in progress").length;
+          resolved =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "resolved").length;
+          datefixed =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "date fixed").length;
+          extended =
+              complaint.where((c) => c["Status"]!.toLowerCase() == "extended").length;
         });
       }
     });
@@ -108,30 +114,29 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
       return matchStatus && matchCategory;
     }).toList();
 
+    BoxDecoration cardBox = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: Colors.grey.shade300),
+    );
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F8),
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: const Color(0xFF009DCC),
         centerTitle: true,
-        title: const Text("My Complaints",
-        style: TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-  ),
-        ),
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
-            ),
+        title: const Text(
+          "My Complaints",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
           // ===============================
           // TOP STATS
           // ===============================
@@ -161,36 +166,23 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
             Expanded(child: _statCard("Extended", extended, Colors.yellow.shade700)),
           ]),
 
-          const SizedBox(height: 28),
+          const SizedBox(height: 24),
 
           // ===============================
           // FILTER PANEL
           // ===============================
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 12,
-                ),
-              ],
-            ),
+            decoration: cardBox,
             child: Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    isExpanded: true,
                     value: statusFilter,
                     decoration: InputDecoration(
                       labelText: "Status",
-                      filled: true,
-                      fillColor: const Color(0xFFF1F3FF),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
                       ),
                     ),
                     items: const [
@@ -214,11 +206,8 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
                     value: categoryFilter,
                     decoration: InputDecoration(
                       labelText: "Category",
-                      filled: true,
-                      fillColor: const Color(0xFFF1F3FF),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
                       ),
                     ),
                     items: [
@@ -238,7 +227,7 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
 
           Text(
             "Your Complaints (${filteredList.length})",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
 
           const SizedBox(height: 16),
@@ -254,28 +243,23 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
               final c = filteredList[index];
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: 14),
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
+                decoration: cardBox,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         c["Category"]!,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: statusColor(c["Status"]!).withOpacity(0.15),
@@ -302,19 +286,14 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
                     style: TextStyle(color: Colors.grey[500], fontSize: 12),
                   ),
                   const SizedBox(height: 12),
-
-                  // ===============================
-                  // VIEW DETAILS BUTTON (FIXED)
-                  // ===============================
                   Align(
                     alignment: Alignment.centerRight,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF6A11CB), width: 1.5),
+                        side: const BorderSide(color: Color(0xFF009DCC)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -329,8 +308,8 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
                       child: const Text(
                         "View Details",
                         style: TextStyle(
-                          color: Color(0xFF6A11CB),
-                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF009DCC),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -344,17 +323,12 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
     );
   }
 
-  // ===============================
-  // UI HELPERS
-  // ===============================
   Widget _bigStatCard(String title, int count) {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
-        ),
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFF009DCC),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(children: [
         Text(title, style: const TextStyle(color: Colors.white70)),
@@ -362,7 +336,7 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
         Text(
           "$count",
           style: const TextStyle(
-            fontSize: 36,
+            fontSize: 32,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -373,17 +347,18 @@ class _MyComplaintsPageState extends State<MyComplaintsPage> {
 
   Widget _statCard(String title, int count, Color color) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(children: [
-        Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+        Text(title, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         Text(
           "$count",
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ]),
     );

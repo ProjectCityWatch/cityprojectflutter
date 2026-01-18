@@ -12,22 +12,16 @@ class CommunityHubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
           // =============================
-          // GRADIENT HEADER
+          // SOLID HEADER (THEME COLOR)
           // =============================
           Container(
-            height: MediaQuery.of(context).size.height * 0.38,
+            height: MediaQuery.of(context).size.height * 0.32,
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF1A73E8),
-                  Color(0xFF6A1B9A),
-                ],
-              ),
+              color: Color(0xFF009DCC),
             ),
           ),
 
@@ -35,7 +29,7 @@ class CommunityHubPage extends StatelessWidget {
           // CONTENT
           // =============================
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(22, 100, 22, 40),
+            padding: const EdgeInsets.fromLTRB(20, 90, 20, 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -45,15 +39,12 @@ class CommunityHubPage extends StatelessWidget {
                 const Text(
                   "Community",
                   style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
-                    letterSpacing: 0.6,
                   ),
                 ),
-
                 const SizedBox(height: 6),
-
                 const Text(
                   "Explore, contribute & lead change",
                   style: TextStyle(
@@ -62,23 +53,17 @@ class CommunityHubPage extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 26),
 
                 // =============================
                 // MENU CARD CONTAINER
                 // =============================
                 Container(
-                  padding: const EdgeInsets.all(22),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.18),
-                        blurRadius: 30,
-                        offset: const Offset(0, 18),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Column(
                     children: [
@@ -90,12 +75,13 @@ class CommunityHubPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const CommunityPage()),
+                              builder: (_) => const CommunityPage(),
+                            ),
                           );
                         },
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       _menuCard(
                         icon: Icons.stars_outlined,
@@ -105,12 +91,13 @@ class CommunityHubPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const PointsPage()),
+                              builder: (_) => const PointsPage(),
+                            ),
                           );
                         },
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       _menuCard(
                         icon: Icons.leaderboard_outlined,
@@ -120,12 +107,13 @@ class CommunityHubPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const LeaderboardPage()),
+                              builder: (_) => const LeaderboardPage(),
+                            ),
                           );
                         },
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       _menuCard(
                         icon: Icons.map_outlined,
@@ -135,7 +123,8 @@ class CommunityHubPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const MapDashboardPage()),
+                              builder: (_) => const MapDashboardPage(),
+                            ),
                           );
                         },
                       ),
@@ -151,7 +140,7 @@ class CommunityHubPage extends StatelessWidget {
   }
 
   // =============================
-  // PREMIUM MENU CARD
+  // MENU CARD (THEME CONSISTENT)
   // =============================
   Widget _menuCard({
     required IconData icon,
@@ -160,32 +149,26 @@ class CommunityHubPage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(18),
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade300),
         ),
         child: Row(
           children: [
             // ICON
             Container(
-              height: 46,
-              width: 46,
-              decoration: BoxDecoration(
+              height: 44,
+              width: 44,
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1A73E8),
-                    Color(0xFF6A1B9A),
-                  ],
-                ),
+                color: Color(0xFF009DCC),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: Icon(icon, color: Colors.white, size: 22),
             ),
 
             const SizedBox(width: 14),
@@ -199,10 +182,10 @@ class CommunityHubPage extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: TextStyle(
@@ -214,8 +197,11 @@ class CommunityHubPage extends StatelessWidget {
               ),
             ),
 
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey,
+            ),
           ],
         ),
       ),
